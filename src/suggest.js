@@ -1,7 +1,7 @@
 /*
 --------------------------------------------------------
 suggest.js - Input Suggest
-Version 2.3.1 (Update 2013/02/11)
+Version 2.3 (Update 2013/02/11)
 
 Copyright (c) 2006-2013 onozaty (http://www.enjoyxstudy.com)
 
@@ -69,7 +69,7 @@ Suggest.Local.prototype = {
   classMouseOver: 'over',
   classSelect: 'select',
   hookBeforeSearch: function(){},
-
+  hookAfterMoveEnd: function(){},
   setOptions: function(options) {
     Suggest.copyProperties(this, options);
   },
@@ -121,7 +121,7 @@ Suggest.Local.prototype = {
   _search: function(text) {
 
     var resultList = [];
-    var temp; 
+    var temp;
     this.suggestIndexList = [];
 
     for (var i = 0, length = this.candidateList.length; i < length; i++) {
@@ -146,8 +146,8 @@ Suggest.Local.prototype = {
     if ((pos == -1) || (this.prefix && pos != 0)) return null;
 
     if (this.highlight) {
-      return (this._escapeHTML(value.substr(0, pos)) + '<strong>' 
-             + this._escapeHTML(value.substr(pos, pattern.length)) 
+      return (this._escapeHTML(value.substr(0, pos)) + '<strong>'
+             + this._escapeHTML(value.substr(pos, pattern.length))
                + '</strong>' + this._escapeHTML(value.substr(pos + pattern.length)));
     } else {
       return this._escapeHTML(value);
@@ -198,7 +198,7 @@ Suggest.Local.prototype = {
       this.timerId = setTimeout(this._bind(this.checkLoop), this.interval);
     }
 
-    if (this.dispAllKey && event.ctrlKey 
+    if (this.dispAllKey && event.ctrlKey
         && this.getInputText() == ''
         && !this.suggestList
         && event.keyCode == Suggest.Key.DOWN) {
@@ -309,7 +309,7 @@ Suggest.Local.prototype = {
 
   changeUnactive: function() {
 
-    if (this.suggestList != null 
+    if (this.suggestList != null
         && this.suggestList.length > 0
         && this.activePosition != null) {
       this.setStyleUnactive(this.suggestList[this.activePosition]);
@@ -375,6 +375,7 @@ Suggest.Local.prototype = {
     } else if (this.input.setSelectionRange) {
       this.input.setSelectionRange(this.input.value.length, this.input.value.length);
     }
+    this.hookAfterMoveEnd(this.getInputText());
   },
 
   // Utils
@@ -491,4 +492,3 @@ Suggest.LocalMulti.prototype.setInputText = function(text) {
 Suggest.LocalMulti.prototype.getLastTokenPos = function() {
   return this.input.value.lastIndexOf(this.delim);
 };
-
